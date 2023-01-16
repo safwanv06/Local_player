@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musicplayer1/Songs.dart';
@@ -44,6 +42,23 @@ class _PlayerState extends State<Player> {
         a = true;
       });
 
+      print('>>>>>>>>>>>${widget.audioplayer.playing}');
+      _duration = songdata!.duration;
+    } catch (e) {
+      print(e);
+    }
+  }
+  prevSong(){
+    Index = Index! -1;
+    songdata = Songs.lst![Index!];
+    Uuri = songdata!.uri!;
+    try {
+      widget.audioplayer.setAudioSource(AudioSource.uri(Uri.parse(Uuri!)));
+      print('>>>>>>>>>>>${widget.audioplayer.playing}');
+      widget.audioplayer.play();
+      setState(() {
+        a = true;
+      });
       print('>>>>>>>>>>>${widget.audioplayer.playing}');
       _duration = songdata!.duration;
     } catch (e) {
@@ -149,76 +164,98 @@ class _PlayerState extends State<Player> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Expanded(child: SizedBox()),
-                      Expanded(
-                        flex: 2,
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(60))),
+                        child: IconButton(
+                            onPressed: () {
+                              prevSong();
+                            },
+                            icon: Icon(
+                              Icons.skip_previous,
+                              color: Colors.white,
+                              size: 30,
+                            )),
+                      ),SizedBox(width: 10),
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(60))),
                         child: IconButton(
                           onPressed: () {
                             widget.audioplayer
                                 .seek(Duration(seconds: _position! - 5));
                           },
                           icon: const Icon(
-                            size: 40,
+                            size: 30,
                             Icons.fast_rewind,
                             color: Colors.white,
                           ),
                         ),
-                      ),
-                      Expanded(child: SizedBox()),
-                      Expanded(
-                        flex: 2,
-                        child: StreamBuilder(
-                            stream: widget.audioplayer.playerStateStream,
-                            builder:
-                                (context, AsyncSnapshot<PlayerState> snapshot) {
-                              print('???????????????/${snapshot.data}');
-                              playerState(snapshot);
+                      ),SizedBox(width: 20),
+                      StreamBuilder(
+                          stream: widget.audioplayer.playerStateStream,
+                          builder:
+                              (context, AsyncSnapshot<PlayerState> snapshot) {
+                            print('???????????????/${snapshot.data}');
+                            playerState(snapshot);
 
-                              return a
-                                  ? Container(
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(50))),
-                                      child: IconButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              widget.audioplayer.pause();
-                                              a = false;
-                                            });
-                                          },
-                                          icon: const Icon(
-                                            Icons.pause,
-                                            size: 60,
-                                            color: Colors.black,
-                                          )),
-                                    )
-                                  : Container(
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(50))),
-                                      child: IconButton(
+                            return a
+                                ? Container(
+                                    width: 80,
+                                    height: 80,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(50))),
+                                    child: IconButton(
                                         onPressed: () {
                                           setState(() {
-                                            widget.audioplayer.play();
-                                            a = true;
+                                            widget.audioplayer.pause();
+                                            a = false;
                                           });
                                         },
                                         icon: const Icon(
-                                          Icons.play_arrow_rounded,
+                                          Icons.pause,
+                                          size: 50,
                                           color: Colors.black,
-                                          size: 60,
-                                        ),
+                                        )),
+                                  )
+                                : Container(
+                                    width: 80,
+                                    height: 80,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(50))),
+                                    child: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          widget.audioplayer.play();
+                                          a = true;
+                                        });
+                                      },
+                                      icon: const Icon(
+                                        Icons.play_arrow_rounded,
+                                        color: Colors.black,
+                                        size: 50,
                                       ),
-                                    );
-                            }),
-                      ),
-                      Expanded(child: SizedBox()),
-                      Expanded(
-                        flex: 2,
+                                    ),
+                                  );
+                          }),SizedBox(width: 20),
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(60))),
                         child: IconButton(
                           onPressed: () {
                             widget.audioplayer
@@ -227,11 +264,24 @@ class _PlayerState extends State<Player> {
                           icon: Icon(
                             Icons.fast_forward,
                             color: Colors.white,
-                            size: 40,
+                            size: 30,
                           ),
                         ),
+                      ),SizedBox(width: 10),
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(60))),
+                        child: IconButton(
+                            onPressed: () {nextSong();},
+                            icon: Icon(
+                              Icons.skip_next,
+                              color: Colors.white,
+                              size: 25,
+                            )),
                       ),
-                      Expanded(child: SizedBox()),
                     ],
                   ),
                 )),
